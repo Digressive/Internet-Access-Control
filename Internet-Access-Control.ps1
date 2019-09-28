@@ -1,10 +1,10 @@
-﻿# ----------------------------------------------------------------------------
+﻿# ---------------------------------------------------------------------------------------------------
 # Script: Internet Access Control
 # Version: 1.0
-# Author: Mike Galvin
+# Author: Mike Galvin based largly on work by Peter Löfgren (https://syscenramblings.wordpress.com)
 # Contact: mike@gal.vin or twitter.com/mikegalvin_
 # Date: 2019-09-28
-# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
 
 # Creates the disable option used by the script
 Param(

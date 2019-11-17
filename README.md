@@ -12,6 +12,8 @@ Please consider donating to support my work:
 
 Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
 
+-Mike
+
 ## Configuration
 
 ``` txt

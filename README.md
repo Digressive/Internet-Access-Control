@@ -1,29 +1,58 @@
-# Internet Access Control
+# Internet Access Control Utility
 
-Control Internet Access with this PowerShell script.
+Control internet access with Windows Firewall
 
-This script is based largly on code by Peter Löfgren. His post on this script (and lots
-more great SCCM content) is [available here](https://syscenramblings.wordpress.com/2017/10/25/windows-10-1709-reference-image)
+``` txt
+   ____     __                   __    ___
+  /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___
+ _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<
+/___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/
+ / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __
+/ /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /
+\___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /
+                                                   /___/
 
-Please consider donating to support my work:
+  Mike Galvin   https://gal.vin    Version 20.03.17 🔒
+```
 
-* You can support me on a monthly basis [using Patreon.](https://www.patreon.com/mikegalvin)
-* You can support me with a one-time payment [using PayPal](https://www.paypal.me/digressive) or by [using Kofi.](https://ko-fi.com/mikegalvin)
+This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)
+
+For full instructions and documentation, [visit my site.](https://gal.vin/2020/03/17/internet-access-control-utility)
+
+Please consider supporting my work:
+
+* Sign up [using Patreon.](https://www.patreon.com/mikegalvin)
+* Support with a one-time payment [using PayPal.](https://www.paypal.me/digressive)
+
+Internet Access Control Utility can also be downloaded from:
+
+* [The Microsoft PowerShell Gallery](https://www.powershellgallery.com/packages/Internet-Access-Control)
 
 Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
 
 -Mike
 
-## Configuration
+## Features and Requirements
+
+* It requires Windows Firewall to be active.
+
+This utility has been tested on Windows 10.
+
+### Configuration
+
+Here’s a list of all the command line switches and example configurations.
+
+| Command Line Switch | Description | Example |
+| ------------------- | ----------- | ------- |
+| -Disable | Block the internet. Create the firewall rule to block ports 80 and 443 | N/A |
+| -Enable | Allow the internet. Removes the firewall rule created, allowing the ports 80 and 443 | N/A |
+| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | C:\scripts\logs |
+| -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
+
+### Example
 
 ``` txt
--Disable
+Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
 ```
 
-Create the firewall rule to block ports 80 and 443
-
-``` txt
--Enable
-```
-
-Removes the firewall rule created, allowing the ports 80 and 443
+The above command will disable the internet access using Windows Firewall and the log file will be output to C:\scripts\logs.

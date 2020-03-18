@@ -12,7 +12,7 @@ Control internet access with Windows Firewall
 \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /
                                                    /___/
 
-  Mike Galvin   https://gal.vin    Version 20.03.17 🔒
+  Mike Galvin   https://gal.vin    Version 20.03.18 🔒
 ```
 
 This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)

@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 20.03.17
+.VERSION 20.03.18
 
 .GUID 8b5b43ea-f1d3-4fbe-894e-0ce4f5dab51b
 
@@ -34,6 +34,12 @@
 
     .DESCRIPTION
     Block or allow internet access using Windows Firewall
+
+    .PARAMETER Disable
+    Create a Windows Firewall rule to block internet access using ports 80 and 443.
+
+    .PARAMETER Enable
+    Remove the Windows Firewall rule to block internet access.
 
     .PARAMETER NoBanner
     Use this option to hide the ASCII art title in the console.
@@ -72,7 +78,7 @@ If ($NoBanner -eq $False)
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /       "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                     /___/        "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    Mike Galvin   https://gal.vin        Version 20.03.17         "
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    Mike Galvin   https://gal.vin        Version 20.03.18         "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
     Write-Host -Object ""
 }
@@ -148,14 +154,15 @@ Function Write-Log($Type, $Event)
 ## Display the current config and log if configured.
 ##
 Write-Log -Type Conf -Event "************ Running with the following config *************."
+Write-Log -Type Conf -Event "Hostname:..............$env:computername."
 If ($Disable)
 {
-   Write-Log -Type Conf -Event "Net access disabled:...$Disable."
+   Write-Log -Type Conf -Event "Net access will be:....Blocked."
 }
 
 If ($Enable)
 {
-   Write-Log -Type Conf -Event "Net access enabled:...$Enable."
+   Write-Log -Type Conf -Event "Net access will be:....Allowed."
 }
 
 If ($Null -ne $LogPath)
@@ -173,18 +180,36 @@ Write-Log -Type Info -Event "Process started"
 ## Display current config ends here.
 ##
 
-## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
-If ($Disable)
+## Test if the rule already exists
+$RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block"
+
+If ($Null -eq $RuleExist)
 {
-   Write-Log -Type Info -Event "Blocking Ports 80 and 443"
-   New-NetFirewallRule -DisplayName "Block Outgoing 80, 443" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443
+    ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
+    If ($Disable)
+    {
+        Write-Log -Type Info -Event "Creating rule Internet-Access-Control-Block"
+        New-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443 | Out-Null
+    }
+
+    If ($Enable)
+    {
+        Write-Log -Type Err -Event "The rule Internet-Access-Control-Block does not exist"
+    }
 }
 
-# If the -Enable switch is used, the script removes the Firewall Rule created above.
-If ($Enable)
-{
-   Write-Log -Type Info -Event "Allowing Ports 80 and 443"
-   Get-NetFirewallRule -DisplayName "Block Outgoing 80, 443" | Remove-NetFirewallRule
+else {
+    If ($Disable)
+    {
+        Write-Log -Type Err -Event "The rule Internet-Access-Control-Block already exists"
+    }
+
+    ## If the -Enable switch is used, the script removes the Firewall Rule created above.
+    If ($Enable)
+    {
+        Write-Log -Type Info -Event "Removing rule Internet-Access-Control-Block"
+        Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
+    }
 }
 
 Write-Log -Type Info -Event "Process finished"

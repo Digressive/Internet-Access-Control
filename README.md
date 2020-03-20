@@ -46,8 +46,8 @@ Here’s a list of all the command line switches and example configurations.
 | ------------------- | ----------- | ------- |
 | -Disable | Block the internet. Create the firewall rule to block ports 80 and 443 | N/A |
 | -Enable | Allow the internet. Removes the firewall rule created, allowing the ports 80 and 443 | N/A |
-| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | C:\scripts\logs |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
+| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | C:\scripts\logs |
 
 ### Example
 

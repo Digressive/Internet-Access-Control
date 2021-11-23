@@ -14,7 +14,7 @@
 
 .LICENSEURI
 
-.PROJECTURI https://gal.vin/2020/03/17/internet-access-control-utility
+.PROJECTURI https://gal.vin/posts/internet-access-control-utility
 
 .ICONURI
 

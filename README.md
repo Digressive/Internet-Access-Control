@@ -28,7 +28,7 @@ Internet Access Control Utility can also be downloaded from:
 
 * [The Microsoft PowerShell Gallery](https://www.powershellgallery.com/packages/Internet-Access-Control)
 
-Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
+Join the [Discord](http://discord.gg/5ZsnJ5k) or Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
 
 -Mike
 

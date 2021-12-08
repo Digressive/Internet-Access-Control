@@ -12,7 +12,7 @@ Control internet access with Windows Firewall
 \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /
                                                    /___/
 
-  Mike Galvin   https://gal.vin    Version 20.03.18 🔒
+  Mike Galvin   https://gal.vin    Version 21.12.08
 ```
 
 This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)
@@ -35,8 +35,8 @@ Join the [Discord](http://discord.gg/5ZsnJ5k) or Tweet me if you have questions:
 ## Features and Requirements
 
 * It requires Windows Firewall to be active.
-
-This utility has been tested on Windows 10.
+* The utility requires at least PowerShell 5.0.
+* This utility has been tested on Windows 10.
 
 ### Configuration
 
@@ -47,7 +47,7 @@ Here’s a list of all the command line switches and example configurations.
 | -Disable | Block the internet. Create the firewall rule to block ports 80 and 443 | N/A |
 | -Enable | Allow the internet. Removes the firewall rule created, allowing the ports 80 and 443 | N/A |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
-| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | C:\scripts\logs |
+| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | ```C:\scripts\logs``` |
 
 ### Example
 
@@ -55,4 +55,4 @@ Here’s a list of all the command line switches and example configurations.
 Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
 ```
 
-The above command will disable the internet access using Windows Firewall and the log file will be output to C:\scripts\logs.
+The above command will disable the internet access using Windows Firewall and the log file will be output to ```C:\scripts\logs```.

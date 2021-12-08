@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 20.03.18
+.VERSION 21.12.08
 
 .GUID 8b5b43ea-f1d3-4fbe-894e-0ce4f5dab51b
 
@@ -59,7 +59,6 @@
 [CmdletBinding()]
 Param(
     [alias("L")]
-    [ValidateScript({Test-Path $_ -PathType 'Container'})]
     $LogPath,
     [switch]$Enable,
     [switch]$Disable,
@@ -78,7 +77,7 @@ If ($NoBanner -eq $False)
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /       "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                     /___/        "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    Mike Galvin   https://gal.vin        Version 20.03.18         "
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    Mike Galvin   https://gal.vin        Version 21.12.08         "
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
     Write-Host -Object ""
 }
@@ -87,6 +86,14 @@ If ($NoBanner -eq $False)
 ## If the log file already exists, clear it.
 If ($LogPath)
 {
+    ## Make sure the log directory exists.
+    $LogPathFolderT = Test-Path $LogPath
+
+    If ($LogPathFolderT -eq $False)
+    {
+        New-Item $LogPath -ItemType Directory -Force | Out-Null
+    }
+
     $LogFile = ("Inet-Access-Control_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
     $Log = "$LogPath\$LogFile"
 
@@ -107,75 +114,79 @@ Function Get-DateFormat
 }
 
 ## Function for logging.
-Function Write-Log($Type, $Event)
+Function Write-Log($Type, $Evt)
 {
     If ($Type -eq "Info")
     {
         If ($Null -ne $LogPath)
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Event"
+            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
         }
 
-        Write-Host -Object "$(Get-DateFormat) [INFO] $Event"
+        Write-Host -Object "$(Get-DateFormat) [INFO] $Evt"
     }
 
     If ($Type -eq "Succ")
     {
         If ($Null -ne $LogPath)
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Event"
+            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
         }
 
-        Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Event"
+        Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Evt"
     }
 
     If ($Type -eq "Err")
     {
         If ($Null -ne $LogPath)
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Event"
+            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
         }
 
-        Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Event"
+        Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Evt"
     }
 
     If ($Type -eq "Conf")
     {
         If ($Null -ne $LogPath)
         {
-            Add-Content -Path $Log -Encoding ASCII -Value "$Event"
+            Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
         }
 
-        Write-Host -ForegroundColor Cyan -Object "$Event"
+        Write-Host -ForegroundColor Cyan -Object "$Evt"
     }
 }
 
 ##
 ## Display the current config and log if configured.
 ##
-Write-Log -Type Conf -Event "************ Running with the following config *************."
-Write-Log -Type Conf -Event "Hostname:..............$env:computername."
+
+Write-Log -Type Conf -Evt "************ Running with the following config *************."
+Write-Log -Type Conf -Evt "Utility Version:.......21.12.08"
+Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
+Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
 If ($Disable)
 {
-   Write-Log -Type Conf -Event "Net access will be:....Blocked."
+   Write-Log -Type Conf -Evt "Net access will be:....Blocked."
 }
 
 If ($Enable)
 {
-   Write-Log -Type Conf -Event "Net access will be:....Allowed."
+   Write-Log -Type Conf -Evt "Net access will be:....Allowed."
 }
 
 If ($Null -ne $LogPath)
 {
-    Write-Log -Type Conf -Event "Logs directory:........$LogPath."
+    Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
 }
 
 else {
-    Write-Log -Type Conf -Event "Logs directory:........No Config"
+    Write-Log -Type Conf -Evt "Logs directory:........No Config"
 }
 
-Write-Log -Type Conf -Event "************************************************************"
-Write-Log -Type Info -Event "Process started"
+Write-Log -Type Conf -Evt "************************************************************"
+Write-Log -Type Info -Evt "Process started"
+
 ##
 ## Display current config ends here.
 ##
@@ -188,31 +199,31 @@ If ($Null -eq $RuleExist)
     ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
     If ($Disable)
     {
-        Write-Log -Type Info -Event "Creating rule Internet-Access-Control-Block"
+        Write-Log -Type Info -Evt "Creating rule Internet-Access-Control-Block"
         New-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443 | Out-Null
     }
 
     If ($Enable)
     {
-        Write-Log -Type Err -Event "The rule Internet-Access-Control-Block does not exist"
+        Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block does not exist"
     }
 }
 
 else {
     If ($Disable)
     {
-        Write-Log -Type Err -Event "The rule Internet-Access-Control-Block already exists"
+        Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block already exists"
     }
 
     ## If the -Enable switch is used, the script removes the Firewall Rule created above.
     If ($Enable)
     {
-        Write-Log -Type Info -Event "Removing rule Internet-Access-Control-Block"
+        Write-Log -Type Info -Evt "Removing rule Internet-Access-Control-Block"
         Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
     }
 }
 
-Write-Log -Type Info -Event "Process finished"
+Write-Log -Type Info -Evt "Process finished"
 
 ## If logging is configured then finish the log file.
 If ($LogPath)

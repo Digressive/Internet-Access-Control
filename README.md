@@ -2,19 +2,6 @@
 
 Control internet access with Windows Firewall
 
-``` txt
-   ____     __                   __    ___
-  /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___
- _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<
-/___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/
- / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __
-/ /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /
-\___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /
-                                                   /___/
-
-  Mike Galvin   https://gal.vin    Version 21.12.08
-```
-
 This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)
 
 For full instructions and documentation, [visit my site.](https://gal.vin/posts/internet-access-control-utility)

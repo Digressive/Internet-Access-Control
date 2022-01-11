@@ -4,7 +4,7 @@ Control internet access with Windows Firewall
 
 This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)
 
-For full instructions and documentation, [visit my site.](https://gal.vin/posts/internet-access-control-utility)
+For full instructions and documentation, [visit my site.](https://gal.vin/utils/internet-access-control-utility/)
 
 Please consider supporting my work:
 

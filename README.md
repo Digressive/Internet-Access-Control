@@ -23,9 +23,9 @@ Join the [Discord](http://discord.gg/5ZsnJ5k) or Tweet me if you have questions:
 
 * It requires Windows Firewall to be active.
 * The utility requires at least PowerShell 5.0.
-* This utility has been tested on Windows 10.
+* This utility has been tested on Windows 11 and Windows 10.
 
-### Configuration
+## Configuration
 
 Here’s a list of all the command line switches and example configurations.
 
@@ -36,7 +36,7 @@ Here’s a list of all the command line switches and example configurations.
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
 | -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | ```C:\scripts\logs``` |
 
-### Example
+## Example
 
 ``` txt
 Internet-Access-Control.ps1 -Disable -L C:\scripts\logs

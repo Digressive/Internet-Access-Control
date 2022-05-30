@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 21.12.08
+.VERSION 22.05.30
 
 .GUID 8b5b43ea-f1d3-4fbe-894e-0ce4f5dab51b
 
@@ -49,10 +49,16 @@
     The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log
     Do not add a trailing \ backslash.
 
+    .PARAMETER LogRotate
+    Instructs the utility to remove logs older than a specified number of days.
+
+    .PARAMETER Help
+    Show usage help in the command line.
+
     .EXAMPLE
     Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
 
-    The above command will disable the internet access using Windows Firewall and the log file will be output to C:\scripts\logs.
+    The above command will disable the internet access using Windows Firewall and generate a log file.
 #>
 
 ## Set up command line switches.
@@ -60,175 +66,193 @@
 Param(
     [alias("L")]
     $LogPath,
+    [alias("LogRotate")]
+    $LogHistory,
     [switch]$Enable,
     [switch]$Disable,
+    [switch]$Help,
     [switch]$NoBanner)
 
 If ($NoBanner -eq $False)
 {
-    Write-Host -Object ""
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "     ____     __                   __    ___                      "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "   _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  /___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "   / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __      "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  / /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /      "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "  \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /       "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                     /___/        "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "    Mike Galvin   https://gal.vin        Version 21.12.08         "
-    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "                                                                  "
-    Write-Host -Object ""
+    Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "
+       ____     __                   __    ___                      
+      /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___  
+     _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<  
+    /___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/  
+     / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __      
+    / /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /      
+    \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /       
+                                                       /___/        
+      Mike Galvin             Version 22.05.30                      
+    https://gal.vin          See -help for usage                    
+                                                                    
+               Donate: https://www.paypal.me/digressive             
+"
 }
 
-## If logging is configured, start logging.
-## If the log file already exists, clear it.
-If ($LogPath)
+If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
-    ## Make sure the log directory exists.
-    $LogPathFolderT = Test-Path $LogPath
+    Write-Host -Object "Usage:
+    From an elevated terminal run: [path\]Remove-MS-Store-Apps.ps1 -List [path\apps-to-remote.txt]
+    This will remove the apps in the txt file from your Windows installation for all users.
 
-    If ($LogPathFolderT -eq $False)
-    {
-        New-Item $LogPath -ItemType Directory -Force | Out-Null
-    }
-
-    $LogFile = ("Inet-Access-Control_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
-    $Log = "$LogPath\$LogFile"
-
-    $LogT = Test-Path -Path $Log
-
-    If ($LogT)
-    {
-        Clear-Content -Path $Log
-    }
-
-    Add-Content -Path $Log -Encoding ASCII -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") [INFO] Log started"
-}
-
-## Function to get date in specific format.
-Function Get-DateFormat
-{
-    Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-}
-
-## Function for logging.
-Function Write-Log($Type, $Evt)
-{
-    If ($Type -eq "Info")
-    {
-        If ($Null -ne $LogPath)
-        {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
-        }
-
-        Write-Host -Object "$(Get-DateFormat) [INFO] $Evt"
-    }
-
-    If ($Type -eq "Succ")
-    {
-        If ($Null -ne $LogPath)
-        {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
-        }
-
-        Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Evt"
-    }
-
-    If ($Type -eq "Err")
-    {
-        If ($Null -ne $LogPath)
-        {
-            Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
-        }
-
-        Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Evt"
-    }
-
-    If ($Type -eq "Conf")
-    {
-        If ($Null -ne $LogPath)
-        {
-            Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
-        }
-
-        Write-Host -ForegroundColor Cyan -Object "$Evt"
-    }
-}
-
-##
-## Display the current config and log if configured.
-##
-
-Write-Log -Type Conf -Evt "************ Running with the following config *************."
-Write-Log -Type Conf -Evt "Utility Version:.......21.12.08"
-Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
-Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
-If ($Disable)
-{
-   Write-Log -Type Conf -Evt "Net access will be:....Blocked."
-}
-
-If ($Enable)
-{
-   Write-Log -Type Conf -Evt "Net access will be:....Allowed."
-}
-
-If ($Null -ne $LogPath)
-{
-    Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
+    To operate on a wim file: -Wim [path\install.wim] -WimIndex [number] (optional) -WimMountPath [path\mnt-folder]
+    To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
+    To list apps for all users: -PCApps. To list apps for the current user: -UserApps. Run with no ASCII banner: -NoBanner"
 }
 
 else {
-    Write-Log -Type Conf -Evt "Logs directory:........No Config"
-}
 
-Write-Log -Type Conf -Evt "************************************************************"
-Write-Log -Type Info -Evt "Process started"
+    ## If logging is configured, start logging.
+    ## If the log file already exists, clear it.
+    If ($LogPath)
+    {
+        ## Make sure the log directory exists.
+        If ((Test-Path -Path $LogPath) -eq $False)
+        {
+            New-Item $LogPath -ItemType Directory -Force | Out-Null
+        }
 
-##
-## Display current config ends here.
-##
+        $LogFile = ("Inet-Access-Control_{0:yyyy-MM-dd_HH-mm-ss}.log" -f (Get-Date))
+        $Log = "$LogPath\$LogFile"
 
-## Test if the rule already exists
-$RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block"
+        If (Test-Path -Path $Log)
+        {
+            Clear-Content -Path $Log
+        }
+    }
 
-If ($Null -eq $RuleExist)
-{
-    ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
+    ## Function to get date in specific format.
+    Function Get-DateFormat
+    {
+        Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    }
+
+    ## Function for logging.
+    Function Write-Log($Type, $Evt)
+    {
+        If ($Type -eq "Info")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
+            }
+
+            Write-Host -Object "$(Get-DateFormat) [INFO] $Evt"
+        }
+
+        If ($Type -eq "Succ")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
+            }
+
+            Write-Host -ForegroundColor Green -Object "$(Get-DateFormat) [SUCCESS] $Evt"
+        }
+
+        If ($Type -eq "Err")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
+            }
+
+            Write-Host -ForegroundColor Red -BackgroundColor Black -Object "$(Get-DateFormat) [ERROR] $Evt"
+        }
+
+        If ($Type -eq "Conf")
+        {
+            If ($LogPath)
+            {
+                Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
+            }
+
+            Write-Host -ForegroundColor Cyan -Object "$Evt"
+        }
+    }
+
+    ## Getting Windows Version info
+    $OSVMaj = [environment]::OSVersion.Version | Select-Object -expand major
+    $OSVMin = [environment]::OSVersion.Version | Select-Object -expand minor
+    $OSVBui = [environment]::OSVersion.Version | Select-Object -expand build
+    $OSV = "$OSVMaj" + "." + "$OSVMin" + "." + "$OSVBui"
+
+    ##
+    ## Display the current config and log if configured.
+    ##
+    Write-Log -Type Conf -Evt "************ Running with the following config *************."
+    Write-Log -Type Conf -Evt "Utility Version:.......22.05.30"
+    Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
+    Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
+
     If ($Disable)
     {
-        Write-Log -Type Info -Evt "Creating rule Internet-Access-Control-Block"
-        New-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443 | Out-Null
+        Write-Log -Type Conf -Evt "Net access will be:....Blocked."
     }
 
     If ($Enable)
     {
-        Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block does not exist"
+        Write-Log -Type Conf -Evt "Net access will be:....Allowed."
     }
-}
 
-else {
-    If ($Disable)
+    If ($LogPath)
     {
-        Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block already exists"
+        Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
     }
 
-    ## If the -Enable switch is used, the script removes the Firewall Rule created above.
-    If ($Enable)
+    If ($Null -ne $LogHistory)
     {
-        Write-Log -Type Info -Evt "Removing rule Internet-Access-Control-Block"
-        Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
+        Write-Log -Type Conf -Evt "Logs to keep:..........$LogHistory days"
     }
-}
 
-Write-Log -Type Info -Evt "Process finished"
+    Write-Log -Type Conf -Evt "************************************************************"
+    Write-Log -Type Info -Evt "Process started"
+    ##
+    ## Display current config ends here.
+    ##
 
-## If logging is configured then finish the log file.
-If ($LogPath)
-{
-    Add-Content -Path $Log -Encoding ASCII -Value "$(Get-Date -Format "yyyy-MM-dd HH:mm:ss") [INFO] Log finished"
+    ## Test if the rule already exists
+    $RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block"
+
+    If ($Null -eq $RuleExist)
+    {
+        ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
+        If ($Disable)
+        {
+            Write-Log -Type Info -Evt "Creating rule Internet-Access-Control-Block"
+            New-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443 | Out-Null
+        }
+
+        If ($Enable)
+        {
+            Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block does not exist"
+        }
+    }
+
+    else {
+        If ($Disable)
+        {
+            Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block already exists"
+        }
+
+        ## If the -Enable switch is used, the script removes the Firewall Rule created above.
+        If ($Enable)
+        {
+            Write-Log -Type Info -Evt "Removing rule Internet-Access-Control-Block"
+            Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
+        }
+    }
+
+    Write-Log -Type Info -Evt "Process finished"
+
+    If ($Null -ne $LogHistory)
+    {
+        ## Cleanup logs.
+        Write-Log -Type Info -Evt "Deleting logs older than: $LogHistory days"
+        Get-ChildItem -Path "$LogPath\Remove-MS-Store-Apps_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
+    }
 }
 
 ## End

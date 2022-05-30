@@ -35,6 +35,8 @@ Here’s a list of all the command line switches and example configurations.
 | -Enable | Allow the internet. Removes the firewall rule created, allowing the ports 80 and 443 | N/A |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
 | -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | ```C:\scripts\logs``` |
+| -LogRotate | Instructs the utility to remove logs older than a specified number of days. | 30 |
+| -Help | Show usage instructions. | N/A |
 
 ## Example
 
@@ -42,4 +44,4 @@ Here’s a list of all the command line switches and example configurations.
 Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
 ```
 
-The above command will disable the internet access using Windows Firewall and the log file will be output to ```C:\scripts\logs```.
+The above command will disable the internet access using Windows Firewall and generate a log file.

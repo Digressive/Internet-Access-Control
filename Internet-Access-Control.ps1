@@ -39,7 +39,7 @@
     Create a Windows Firewall rule to block internet access using ports 80 and 443.
 
     .PARAMETER Enable
-    Remove the Windows Firewall rule to block internet access.
+    Remove the Windows Firewall rule and enable internet access.
 
     .PARAMETER NoBanner
     Use this option to hide the ASCII art title in the console.
@@ -76,30 +76,29 @@ Param(
 If ($NoBanner -eq $False)
 {
     Write-Host -ForegroundColor Yellow -BackgroundColor Black -Object "
-       ____     __                   __    ___                      
-      /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___  
-     _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<  
-    /___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/  
-     / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __      
-    / /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /      
-    \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /       
-                                                       /___/        
-      Mike Galvin             Version 22.05.30                      
-    https://gal.vin          See -help for usage                    
-                                                                    
-               Donate: https://www.paypal.me/digressive             
+           ____     __                   __    ___                        
+          /  _/__  / /____ _______  ___ / /_  / _ |___________ ___ ___    
+         _/ // _ \/ __/ -_) __/ _ \/ -_) __/ / __ / __/ __/ -_|_-<(_-<    
+        /___/_//_/\__/\__/_/ /_//_/\__/\__/_/_/_|_\__/\__/\__/___/___/    
+         / ___/__  ___  / /________  / / / / / / /_(_) (_) /___ __        
+        / /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /        
+        \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /         
+                                                           /___/          
+          Mike Galvin             Version 22.05.30                        
+        https://gal.vin          See -help for usage                      
+                                                                          
+                   Donate: https://www.paypal.me/digressive               
 "
 }
 
 If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 {
     Write-Host -Object "Usage:
-    From an elevated terminal run: [path\]Remove-MS-Store-Apps.ps1 -List [path\apps-to-remote.txt]
-    This will remove the apps in the txt file from your Windows installation for all users.
-
-    To operate on a wim file: -Wim [path\install.wim] -WimIndex [number] (optional) -WimMountPath [path\mnt-folder]
+    From an elevated terminal run: [path\]Internet-Access-Control.ps1 -Disable to create a
+    Windows Firewall rule to block internet access using ports 80 and 443.
+    Use -Enable to remove the Windows Firewall rule and enable internet access.
     To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
-    To list apps for all users: -PCApps. To list apps for the current user: -UserApps. Run with no ASCII banner: -NoBanner"
+    Run with no ASCII banner: -NoBanner"
 }
 
 else {
@@ -213,32 +212,40 @@ else {
     ## Display current config ends here.
     ##
 
-    ## Test if the rule already exists
-    $RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block"
-
-    If ($Null -eq $RuleExist)
+    ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
+    If ($Disable)
     {
-        ## If the -Disable switch is used, the script adds a Firewall Rule to block traffic on ports 80 (http) and 443 (https).
-        If ($Disable)
+        ## Test if the rule already exists
+        try {
+            $RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -ErrorAction Stop
+        }
+
+        catch {
+            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule doesn't exist, creating it."
+        }
+
+        If ($RuleExist.count -eq 0)
         {
-            Write-Log -Type Info -Evt "Creating rule Internet-Access-Control-Block"
             New-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -Enabled True -Direction Outbound -Profile Any -Action Block -Protocol TCP -RemotePort 80,443 | Out-Null
         }
 
-        If ($Enable)
-        {
-            Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block does not exist"
+        else {
+            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule already exists, nothing to do."
         }
     }
 
-    else {
-        If ($Disable)
-        {
-            Write-Log -Type Err -Evt "The rule Internet-Access-Control-Block already exists"
+    If ($Enable)
+    {
+        ## Test if the rule already exists
+        try {
+            $RuleExist = Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" -ErrorAction Stop
         }
 
-        ## If the -Enable switch is used, the script removes the Firewall Rule created above.
-        If ($Enable)
+        catch {
+            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule doesn't exist, nothing to do."
+        }
+
+        If ($RuleExist.count -ne 0)
         {
             Write-Log -Type Info -Evt "Removing rule Internet-Access-Control-Block"
             Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
@@ -251,7 +258,7 @@ else {
     {
         ## Cleanup logs.
         Write-Log -Type Info -Evt "Deleting logs older than: $LogHistory days"
-        Get-ChildItem -Path "$LogPath\Remove-MS-Store-Apps_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
+        Get-ChildItem -Path "$LogPath\Inet-Access-Control_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
     }
 }
 

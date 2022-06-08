@@ -65,7 +65,7 @@
 [CmdletBinding()]
 Param(
     [alias("L")]
-    $LogPath,
+    $LogPathUsr,
     [alias("LogRotate")]
     $LogHistory,
     [switch]$Enable,
@@ -105,8 +105,11 @@ else {
 
     ## If logging is configured, start logging.
     ## If the log file already exists, clear it.
-    If ($LogPath)
+    If ($LogPathUsr)
     {
+        ## Clean User entered string
+        $LogPath = $LogPathUsr.trimend('\')
+
         ## Make sure the log directory exists.
         If ((Test-Path -Path $LogPath) -eq $False)
         {
@@ -133,7 +136,7 @@ else {
     {
         If ($Type -eq "Info")
         {
-            If ($LogPath)
+            If ($LogPathUsr)
             {
                 Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [INFO] $Evt"
             }
@@ -143,7 +146,7 @@ else {
 
         If ($Type -eq "Succ")
         {
-            If ($LogPath)
+            If ($LogPathUsr)
             {
                 Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [SUCCESS] $Evt"
             }
@@ -153,7 +156,7 @@ else {
 
         If ($Type -eq "Err")
         {
-            If ($LogPath)
+            If ($LogPathUsr)
             {
                 Add-Content -Path $Log -Encoding ASCII -Value "$(Get-DateFormat) [ERROR] $Evt"
             }
@@ -163,7 +166,7 @@ else {
 
         If ($Type -eq "Conf")
         {
-            If ($LogPath)
+            If ($LogPathUsr)
             {
                 Add-Content -Path $Log -Encoding ASCII -Value "$Evt"
             }
@@ -196,7 +199,7 @@ else {
         Write-Log -Type Conf -Evt "Net access will be:....Allowed."
     }
 
-    If ($LogPath)
+    If ($LogPathUsr)
     {
         Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
     }

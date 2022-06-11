@@ -102,7 +102,6 @@ If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
 }
 
 else {
-
     ## If logging is configured, start logging.
     ## If the log file already exists, clear it.
     If ($LogPathUsr)
@@ -175,6 +174,13 @@ else {
         }
     }
 
+    ## Test if any options are set
+    If ($Disable -eq $false -And $Enable -eq $false)
+    {
+        Write-Log -Type Err -Evt "No options set."
+        Exit
+    }
+
     ## Getting Windows Version info
     $OSVMaj = [environment]::OSVersion.Version | Select-Object -expand major
     $OSVMin = [environment]::OSVersion.Version | Select-Object -expand minor
@@ -224,7 +230,7 @@ else {
         }
 
         catch {
-            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule doesn't exist, creating it."
+            Write-Log -Type Info -Evt "Creating firewall rule: Internet-Access-Control-Block."
         }
 
         If ($RuleExist.count -eq 0)
@@ -233,7 +239,7 @@ else {
         }
 
         else {
-            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule already exists, nothing to do."
+            Write-Log -Type Err -Evt "Firewall rule: Internet-Access-Control-Block already exists."
         }
     }
 
@@ -245,12 +251,12 @@ else {
         }
 
         catch {
-            Write-Log -Type Info -Evt "Internet-Access-Control-Block rule doesn't exist, nothing to do."
+            Write-Log -Type Err -Evt "Firewall rule: Internet-Access-Control-Block doesn't exist."
         }
 
         If ($RuleExist.count -ne 0)
         {
-            Write-Log -Type Info -Evt "Removing rule Internet-Access-Control-Block"
+            Write-Log -Type Info -Evt "Removing firewall rule: Internet-Access-Control-Block"
             Get-NetFirewallRule -DisplayName "Internet-Access-Control-Block" | Remove-NetFirewallRule
         }
     }
@@ -264,5 +270,4 @@ else {
         Get-ChildItem -Path "$LogPath\Inet-Access-Control_*" -File | Where-Object CreationTime -lt (Get-Date).AddDays(-$LogHistory) | Remove-Item -Recurse
     }
 }
-
 ## End

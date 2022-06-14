@@ -34,31 +34,7 @@
 
     .DESCRIPTION
     Block or allow internet access using Windows Firewall
-
-    .PARAMETER Disable
-    Create a Windows Firewall rule to block internet access using ports 80 and 443.
-
-    .PARAMETER Enable
-    Remove the Windows Firewall rule and enable internet access.
-
-    .PARAMETER NoBanner
-    Use this option to hide the ASCII art title in the console.
-
-    .PARAMETER L
-    The path to output the log file to.
-    The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log
-    Do not add a trailing \ backslash.
-
-    .PARAMETER LogRotate
-    Instructs the utility to remove logs older than a specified number of days.
-
-    .PARAMETER Help
-    Show usage help in the command line.
-
-    .EXAMPLE
-    Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
-
-    The above command will disable the internet access using Windows Firewall and generate a log file.
+    Run with -help or no arguments for usage.
 #>
 
 ## Set up command line switches.
@@ -96,8 +72,11 @@ If ($PSBoundParameters.Values.Count -eq 0 -or $Help)
     Write-Host -Object "Usage:
     From an elevated terminal run: [path\]Internet-Access-Control.ps1 -Disable to create a
     Windows Firewall rule to block internet access using ports 80 and 443.
+
     Use -Enable to remove the Windows Firewall rule and enable internet access.
-    To output a log: -L [path]. To remove logs produced by the utility older than X days: -LogRotate [number].
+
+    To output a log: -L [path\].
+    To remove logs produced by the utility older than X days: -LogRotate [number].
     Run with no ASCII banner: -NoBanner"
 }
 

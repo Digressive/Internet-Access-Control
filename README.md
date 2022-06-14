@@ -2,20 +2,19 @@
 
 Control internet access with Windows Firewall
 
-This script is based on code by Peter Löfgren, [check out his website here.](https://syscenramblings.wordpress.com)
+For full change log and more information, [visit my site.](https://gal.vin/utils/internet-access-control-utility/)
 
-For full instructions and documentation, [visit my site.](https://gal.vin/utils/internet-access-control-utility/)
+Internet Access Control Utility is available from:
+
+* [GitHub](https://github.com/Digressive/Internet-Access-Control)
+* [The Microsoft PowerShell Gallery](https://www.powershellgallery.com/packages/Internet-Access-Control)
 
 Please consider supporting my work:
 
-* Sign up [using Patreon.](https://www.patreon.com/mikegalvin)
-* Support with a one-time payment [using PayPal.](https://www.paypal.me/digressive)
+* Sign up using [Patreon](https://www.patreon.com/mikegalvin).
+* Support with a one-time donation using [PayPal](https://www.paypal.me/digressive).
 
-Internet Access Control Utility can also be downloaded from:
-
-* [The Microsoft PowerShell Gallery](https://www.powershellgallery.com/packages/Internet-Access-Control)
-
-Join the [Discord](http://discord.gg/5ZsnJ5k) or Tweet me if you have questions: [@mikegalvin_](https://twitter.com/mikegalvin_)
+If you’d like to contact me, please leave a comment, send me a [tweet or DM](https://twitter.com/mikegalvin_), or you can join my [Discord server](https://discord.gg/5ZsnJ5k).
 
 -Mike
 
@@ -33,15 +32,15 @@ Here’s a list of all the command line switches and example configurations.
 | ------------------- | ----------- | ------- |
 | -Disable | Block the internet. Create the firewall rule to block ports 80 and 443 | N/A |
 | -Enable | Allow the internet. Removes the firewall rule created, allowing the ports 80 and 443 | N/A |
+| -L | The path to output the log file to. | [path\] |
+| -LogRotate | Remove logs produced by the utility older than X days | [number] |
 | -NoBanner | Use this option to hide the ASCII art title in the console. | N/A |
-| -L | The path to output the log file to. The file name will be Inet-Access-Control_YYYY-MM-dd_HH-mm-ss.log. Do not add a trailing \ backslash. | ```C:\scripts\logs``` |
-| -LogRotate | Instructs the utility to remove logs older than a specified number of days. | 30 |
-| -Help | Show usage instructions. | N/A |
+| -Help | Display usage information. No arguments also displays help. | N/A |
 
 ## Example
 
 ``` txt
-Internet-Access-Control.ps1 -Disable -L C:\scripts\logs
+[path\]Internet-Access-Control.ps1 -Disable
 ```
 
-The above command will disable the internet access using Windows Firewall and generate a log file.
+This will create a Windows Firewall rule to block internet access using ports 80 and 443.

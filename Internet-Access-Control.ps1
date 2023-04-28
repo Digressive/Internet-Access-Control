@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 22.05.30
+.VERSION 23.04.28
 
 .GUID 8b5b43ea-f1d3-4fbe-894e-0ce4f5dab51b
 
@@ -60,7 +60,7 @@ If ($NoBanner -eq $False)
         / /__/ _ \/ _ \/ __/ __/ _ \/ / / /_/ / __/ / / / __/ // /        
         \___/\___/_//_/\__/_/  \___/_/  \____/\__/_/_/_/\__/\_, /         
                                                            /___/          
-          Mike Galvin             Version 22.05.30                        
+          Mike Galvin             Version 23.04.28                        
         https://gal.vin          See -help for usage                      
                                                                           
                    Donate: https://www.paypal.me/digressive               
@@ -169,32 +169,32 @@ else {
     ##
     ## Display the current config and log if configured.
     ##
-    Write-Log -Type Conf -Evt "************ Running with the following config *************."
-    Write-Log -Type Conf -Evt "Utility Version:.......22.05.30"
-    Write-Log -Type Conf -Evt "Hostname:..............$Env:ComputerName."
-    Write-Log -Type Conf -Evt "Windows Version:.......$OSV."
+    Write-Log -Type Conf -Evt "--- Running with the following config ---"
+    Write-Log -Type Conf -Evt "Utility Version: 23.04.28"
+    Write-Log -Type Conf -Evt "Hostname: $Env:ComputerName."
+    Write-Log -Type Conf -Evt "Windows Version: $OSV."
 
     If ($Disable)
     {
-        Write-Log -Type Conf -Evt "Net access will be:....Blocked."
+        Write-Log -Type Conf -Evt "Net access will be: Blocked."
     }
 
     If ($Enable)
     {
-        Write-Log -Type Conf -Evt "Net access will be:....Allowed."
+        Write-Log -Type Conf -Evt "Net access will be: Allowed."
     }
 
     If ($LogPathUsr)
     {
-        Write-Log -Type Conf -Evt "Logs directory:........$LogPath."
+        Write-Log -Type Conf -Evt "Logs directory: $LogPath."
     }
 
     If ($Null -ne $LogHistory)
     {
-        Write-Log -Type Conf -Evt "Logs to keep:..........$LogHistory days"
+        Write-Log -Type Conf -Evt "Logs to keep: $LogHistory days"
     }
 
-    Write-Log -Type Conf -Evt "************************************************************"
+    Write-Log -Type Conf -Evt "---"
     Write-Log -Type Info -Evt "Process started"
     ##
     ## Display current config ends here.

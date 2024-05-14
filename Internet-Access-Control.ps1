@@ -4,7 +4,7 @@
 
 .GUID 8b5b43ea-f1d3-4fbe-894e-0ce4f5dab51b
 
-.AUTHOR Mike Galvin Contact: mike@gal.vin  Based on work by Peter Löfgren syscenramblings.wordpress.com
+.AUTHOR Mike Galvin Contact: digressive@outlook.com Based on work by Peter Löfgren syscenramblings.wordpress.com
 
 .COMPANYNAME Mike Galvin
 

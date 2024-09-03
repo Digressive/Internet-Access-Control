@@ -12,7 +12,7 @@
 
 .TAGS Internet Access Control Windows Firewall
 
-.LICENSEURI
+.LICENSEURI https://github.com/Digressive/Internet-Access-Control?tab=MIT-1-ov-file
 
 .PROJECTURI https://gal.vin/utils/internet-access-control-utility/
 
